@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <version>2</version>
+
+    <readers>
+        <reader>
+            <dll>gadgetron_core_readers</dll>
+            <classname>AcquisitionReader</classname>
+        </reader>
+        <reader>
+            <dll>gadgetron_core_readers</dll>
+            <classname>WaveformReader</classname>
+        </reader>
+    </readers>
+
+    <writers>
+        <writer>
+            <dll>gadgetron_core_writers</dll>
+            <classname>ImageWriter</classname>
+        </writer>
+    </writers>
+
+    <stream>
+        <gadget>
+            <dll>gadgetron_mricore</dll>
+            <classname>NoiseAdjustGadget</classname>
+        </gadget>
+
+        <gadget>
+            <dll>gadgetron_mricore</dll>
+            <classname>RemoveROOversamplingGadget</classname>
+        </gadget>
+        
+        
+        <gadget>
+          <name>PCA</name>
+          <dll>gadgetron_mricore</dll>
+          <classname>PCACoilGadget</classname>
+        </gadget>
+
+        <gadget>
+          <name>CoilReduction</name>
+          <dll>gadgetron_mricore</dll>
+          <classname>CoilReductionGadget</classname>
+          <property name="coils_out" value="12"/>
+        </gadget>
+
+    <!-- Data accumulation and trigger gadget -->
+        <gadget>
+            <dll>gadgetron_mricore</dll>
+            <classname>AcquisitionAccumulateTriggerGadget</classname>
+            <property name="trigger_dimension" value=""/>
+	    <property name="sorting_dimension" value=""/>
+        </gadget>
+
+<!--
+        <external>
+            <connect port="18000"/>
+            <configuration/>
+        </external>
+-->
+
+        <external>
+            <execute name="gadgetron.custom.MP2RAGE_CS.handle_connection_MP2RAGE_CS_allCase"  type="matlab"/>
+            <configuration/>
+        </external>
+ 
+
+    <gadget>
+      <name>Extract_MP2RAGE</name>
+      <dll>gadgetron_rmsb</dll>
+      <classname>ExtractMP2RAGEGadget</classname>
+    </gadget>
+
+    <gadget>
+      <name>FloatToShort</name>
+      <dll>gadgetron_mricore</dll>
+      <classname>FloatToUShortGadget</classname>
+    </gadget>
+
+     <gadget>
+      <name>ImageFinish</name>
+      <dll>gadgetron_mricore</dll>
+      <classname>ImageFinishGadget</classname>
+    </gadget>
+
+    </stream>
+</configuration>
