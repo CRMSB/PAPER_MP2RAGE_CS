@@ -162,10 +162,8 @@ RUN cd /opt/code && \
 # Gadgetron-gadget (required gadgetron installation)
 
 RUN mkdir -p /data/dumpSiemens/ && \ 
-    ln -s /opt/intel/mkl/lib/intel64/*.so /usr/local/lib/ && \
-    cd /opt/code/PAPER_MP2RAGE_CS/ && \
-    cd gadgetron-gadgets-MP2RAGE && \
-    mkdir build && \
+    cd /opt/code/PAPER_MP2RAGE_CS/gadgetron-gadgets-MP2RAGE && \
+    mkdir -p build && \
     cd build && \
     cmake .. && \
     make -j $(nproc) && \
@@ -178,5 +176,5 @@ RUN mkdir -p /data/dumpSiemens/ && \
 RUN  apt-get clean && \
    rm -rf /var/lib/apt/lists/*
 
-CMD ["/opt/start_supervisor"]
-# CMD ["/bin/bash"]
+#CMD ["/opt/start_supervisor"]
+CMD ["/bin/bash"]

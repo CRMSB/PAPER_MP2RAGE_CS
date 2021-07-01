@@ -31,11 +31,13 @@ It is possible to modify the dockerfile/launch_docker script in order to remove 
 * Create the docker image : 
 ```bash
 cd PAPER_MP2RAGE_CS/docker
-sudo docker build -t gadgetrondocker .
+sudo docker build -t gadgetronpaper .
 ```
 * Edit the **launch_docker.sh** according to your preferences :
   *   `-v /data/dumpSiemens:/data/dumpSiemens \` corresponds to the volume mounted on the host to the container
   *    ` -v /usr/local/MATLAB:/usr/local/MATLAB \` mounts the matlab folder from the host in the container
+* launch the script :`sh launch_docker.sh` 
+* launch matlab and increase the 'java heap memory' in Preferences/General
 
 ## Data test:
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-docker run --name=gt_mp2rage_cs \
+docker run --name=gt_paper_mp2rage_cs \
   --tty --interactive \
   --net=host \
   --privileged \
@@ -9,4 +9,4 @@ docker run --name=gt_mp2rage_cs \
   --volume="$HOME/.Xauthority:/root/.Xauthority:rw" \
   -e DISPLAY \
   --gpus all \
-  gadgetrondocker
+  gadgetronpaper
