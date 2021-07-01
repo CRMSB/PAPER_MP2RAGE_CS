@@ -37,6 +37,9 @@ sudo docker build -t gadgetronpaper .
   *   `-v /data/dumpSiemens:/data/dumpSiemens \` corresponds to the volume mounted on the host to the container
   *    ` -v /usr/local/MATLAB:/usr/local/MATLAB \` mounts the matlab folder from the host in the container
 * launch the script :`sh launch_docker.sh` 
+
+**in the created container**
+* check if matlab is supported for gadgetron with :`gadgetron --info` 
 * launch matlab and increase the 'java heap memory' in Preferences/General
 
 ## Data test:

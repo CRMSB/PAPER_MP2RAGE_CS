@@ -159,6 +159,7 @@ RUN cd /opt/code && \
     touch javaclasspath.txt && \ 
     echo "/opt/code/PAPER_MP2RAGE_CS/gadgetron-matlab-MP2RAGE/java" >> javaclasspath.txt
 
+ENV MATLABPATH=$MATLABPATH:/opt/code/PAPER_MP2RAGE_CS/gadgetron-matlab-MP2RAGE:/opt/code/bart/matlab
 # Gadgetron-gadget (required gadgetron installation)
 
 RUN mkdir -p /data/dumpSiemens/ && \ 

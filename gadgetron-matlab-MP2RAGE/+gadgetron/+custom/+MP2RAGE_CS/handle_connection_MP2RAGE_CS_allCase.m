@@ -107,7 +107,7 @@ sensitivity_coil_map=bart(['caldir ' num2str(struct_MP2RAGE.calibSize)], kdata(:
 %sensitivity_coil_map=bart(['ecalib -m1 -r ' num2str(struct_MP2RAGE.calibSize)], kref(:,:,:,:,:,2));
 
 %% Parallel + CS
-struct.bg_mult=1;
+struct.bg_mult=0;
 
 disp('-------------------------------------------------');
 disp('********** bart(pics...)  **********');
