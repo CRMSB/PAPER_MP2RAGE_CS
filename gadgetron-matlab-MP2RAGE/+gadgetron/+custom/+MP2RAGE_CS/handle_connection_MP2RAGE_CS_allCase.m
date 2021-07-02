@@ -12,21 +12,12 @@ sSE = connection.header.encoding.reconSpace.matrixSize.z;
 
 nContrast = connection.header.encoding.encodingLimits.contrast.maximum;
 nSet = connection.header.encoding.encodingLimits.set.maximum;
-%nRep = connection.header.encoding.encodingLimits.repetition.maximum;
 
 maxDim = max(nContrast, nSet) + 1; % Sequence of pierre use nSet and my sequence use nContrast
-
 acquisition = next_acquisition(); % Call input function to produce the next acquisition.
 
 nCh = size(acquisition.data.data,2);
-
-% Consider the acquisition flags; is the acquisition last in slice?
-% if acquisition.is_flag_set(acquisition.ACQ_LAST_IN_MEASUREMENT), break; end
-
-
 kdata=zeros(sRO,nCh,sPE*sSE,maxDim);
-
-
 
 row = acquisition.data.header.kspace_encode_step_1 + 1;
 col = acquisition.data.header.kspace_encode_step_2 + 1;
@@ -53,7 +44,7 @@ if (acquisition.ref.count > 0)
 end
 
 %% prepare parameter for reconstruction
-if strcmp(connection.header.sequenceParameters.sequence_type,'Unknown') % sequence a_MP2RAGEPhase (développé par le RMSB)    
+if strcmp(connection.header.sequenceParameters.sequence_type,'Unknown') % sequence a_MP2RAGEPhase (developped by CRMSB)    
     kdata = permute(kdata,[1 3 2 4]);  
     kdata=reshape(kdata,sRO,sPE,sSE,nCh,1,[]); %% buffering the echo according to bart convetion [RO,E1,E2,CHA,MAP,CON]  
     
@@ -66,10 +57,9 @@ if strcmp(connection.header.sequenceParameters.sequence_type,'Unknown') % sequen
     struct_MP2RAGE.MP2RAGE_TR = connection.header.userParameters.userParameterLong(4).value;
     struct_MP2RAGE.TR = connection.header.sequenceParameters.TR;
     
-else % sequence MP2RAGE développé par le liryc (Pierre Bour)
+else % sequence MP2RAGE developped by LIRYC (Pierre Bour)
     kdata = permute(kdata,[1 3 2 4]);
     kdata=reshape(kdata,sRO,sPE,sSE,nCh,1,[]); %% buffering the echo according to bart convetion [RO,E1,E2,CHA,MAP,CON]
-    
     
     struct_MP2RAGE.calibSize = connection.header.userParameters.userParameterDouble(3).value;
     struct_MP2RAGE.ETL = connection.header.encoding.echoTrainLength;
@@ -101,7 +91,6 @@ end
 
 
 %% Estimate coil sensitivity
-%run('/home/ums/Documents/mriSoft/bart-5.0/startup.m');
 sensitivity_coil_map=bart(['caldir ' num2str(struct_MP2RAGE.calibSize)], kdata(:,:,:,:,:,2));
 %
 %sensitivity_coil_map=bart(['ecalib -m1 -r ' num2str(struct_MP2RAGE.calibSize)], kref(:,:,:,:,:,2));
@@ -111,21 +100,7 @@ struct.bg_mult=0;
 
 disp('-------------------------------------------------');
 disp('********** bart(pics...)  **********');
-%%
 
-% img = gadgetron.lib.fft.cifftn(kdata,[1 2 3]); alternative using gadgetron fft
-%
-% img = fftshift(ifft(ifft(ifft(fftshift(kdata),[],1),[],2),[],3));
-% img = squeeze(sqrt(sum(abs(img).^2,4)));
-% 
-% figure;subplot(2,1,1);
-% imshow(img(:,:,end/2,1),[]);
-% subplot(2,1,2);
-% imshow(img(:,:,end/2,2),[]);
-% pause(3);
-% 
-% 
-% img_to_send = img / max(img(:))*4096;
 img_combined_CS = zeros(size(kdata,1),size(kdata,2),size(kdata,3),maxDim);
 for i = 1:maxDim
     img_combined_CS(:,:,:,i) = bart('pics -S -R W:7:0:0.01', kdata(:,:,:,:,:,i), sensitivity_coil_map);
@@ -142,7 +117,7 @@ MP2RAGE_CS=real((conj(img_combined_CS(:,:,:,1)).*img_combined_CS(:,:,:,2)-multiF
 img_to_send{1}=scale_image_for_gt_and_scanner(permute(abs(img_combined_CS(:,:,:,1)),[4, 1, 2, 3]));
 img_to_send{2}=scale_image_for_gt_and_scanner(permute(abs(img_combined_CS(:,:,:,2)),[4, 1, 2, 3]));
 img_to_send{3}=scale_MP2RAGE_for_gt_and_scanner(permute(MP2RAGE_CS,[4, 1, 2, 3]));
-img_to_send{4}=permute(abs(struct_T1map.T1map),[4, 1, 2, 3]); % no scaling but T1 range limitated to 0 to 4096 (dicom format)
+img_to_send{4}=permute(abs(struct_T1map.T1map),[4, 1, 2, 3]); % no scaling but T1 range limitated to 0 to 4095 (dicom format)
 
 %% send image
 
@@ -164,20 +139,20 @@ function reference = reference_header(acquisition)
 end
 
 function [ image_scale  ] = scale_MP2RAGE_for_gt_and_scanner( im_in )  
-  disp([' avant scaling max : ' , num2str(max(im_in(:))), ' min : ' , num2str(min(im_in(:)))]);
+  disp([' before scaling max : ' , num2str(max(im_in(:))), ' min : ' , num2str(min(im_in(:)))]);
   
   image_scale=im_in*4095+4095/2;
   
-  disp([' apres scaling max : ' , num2str(max(image_scale(:))), ' min : ' , num2str(min(image_scale(:)))]);
+  disp([' after scaling max : ' , num2str(max(image_scale(:))), ' min : ' , num2str(min(image_scale(:)))]);
   
 end
 
 function [ image_scale  ] = scale_image_for_gt_and_scanner( im_in )  
-    disp([' avant scaling max : ' , num2str(max(im_in(:))), ' min : ' , num2str(min(im_in(:)))]);
+    disp([' before scaling max : ' , num2str(max(im_in(:))), ' min : ' , num2str(min(im_in(:)))]);
     
     image_scale=(im_in-min(im_in(:)))*(2^12-1)/(max(im_in(:))-min(im_in(:)));
     
-    disp([' apres scaling max : ' , num2str(max(image_scale(:))), ' min : ' , num2str(min(image_scale(:)))]);
+    disp([' after scaling max : ' , num2str(max(image_scale(:))), ' min : ' , num2str(min(image_scale(:)))]);
     
   end
   

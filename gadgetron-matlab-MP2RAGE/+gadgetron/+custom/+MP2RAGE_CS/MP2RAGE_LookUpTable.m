@@ -47,9 +47,9 @@ lookuptable = param2LUT(T1,struct_MP2RAGE);
 [maxValue] = max(lookuptable);
 [~, I1] = find(lookuptable == maxValue,1,'first');
 %indice du premier max
-lookuptable(1:I1-1)=lookuptable(I1);    %on remplace toutes les valeurs precedentes par le max
+lookuptable(1:I1-1)=lookuptable(I1);    %we replace all the value before the max by max
 [minValue] = min(lookuptable);            
-[~,I2]=find(lookuptable==minValue,1,'first');          %indice du premier min apres ce max
+[~,I2]=find(lookuptable==minValue,1,'first');          %indice of the first min after the max
 
 T1 = T1(I1:I2);                         %on prend les T1 entre ces deux pics
 lookuptable = lookuptable(I1:I2);
