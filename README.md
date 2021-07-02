@@ -56,7 +56,7 @@ sudo docker build -t gadgetronpaper .
 * start gadgetron : `gadgetron -p9002`
 * From another terminal : `docker exec -it <container> bash`
 * Run the reconstruction : `gadgetron_ismrmrd_client -c MP2RAGE_CS_Bucket.xml -f /data/dumpSiemens/<dataset.h5> -o /data/dumpSiemens/RECO.h5`
-* You can visualize the reconstruction with ismrmrdviewer : https://github.com/ismrmrd/ismrmrdviewer or by loading the reconstruction under matlab :
+* You can visualize the reconstruction with ismrmrdviewer : https://github.com/ismrmrd/ismrmrdviewer or by loading the reconstruction under matlab (don't forget to include the matlab folder of the ismrmrd library):
 
 ```matlab
 function [img] = ismrmrd_read_img(struct)
