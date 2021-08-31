@@ -44,7 +44,7 @@ sudo docker build -t gadgetronpaper .
 
 ## Data test:
 
-* Knee / phantom datasets are available here : **???**
+* Knee / phantom datasets are available here : https://zenodo.org/record/5059979
 * Initial datasets used in the paper can be obtained on request.
 
 
