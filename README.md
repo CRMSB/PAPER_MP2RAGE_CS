@@ -1,6 +1,6 @@
 # Compressed Sensing-MP2RAGE
 
-This repository contains the reconstruction code used in a submitted paper to JMRI :
+This repository contains the reconstruction code used in a submitted paper to ??? :
 >The Compressed Sensing MP2RAGE as a surrogate to the MPRAGE for neuro-imaging at 3T
 
 If you use this code please cite: **???**
