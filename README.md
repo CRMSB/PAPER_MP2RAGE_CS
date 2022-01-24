@@ -1,9 +1,11 @@
 # Compressed Sensing-MP2RAGE
 
-This repository contains the reconstruction code used in a submitted paper to ??? :
->The Compressed Sensing MP2RAGE as a surrogate to the MPRAGE for neuro-imaging at 3T
+This repository contains the reconstruction code of this [paper](https://journals.lww.com/investigativeradiology/Abstract/9000/The_Compressed_Sensing_MP2RAGE_as_a_Surrogate_to.98641.aspx) accepted in *Investigative Radiology* :
 
-If you use this code please cite: **???**
+If you use this code please cite:
+
+>Trotier AJ, Dilharreguy B, Anandra S, et al. The Compressed Sensing MP2RAGE as a Surrogate to the MPRAGE for Neuroimaging at 3 T. Investigative Radiology 2022 doi: 10.1097/RLI.0000000000000849.
+
 
 ## What is this repository for?
 This repository contains the code necessary to reconstruct the images and also the corresponding T1 map from the MP2RAGE sequence accelerated with CS.
