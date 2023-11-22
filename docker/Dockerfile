@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.0-cudnn8-devel-rc
+FROM ubuntu:22.04
 
 # Proxy issue ->
 # ENV http_proxy="http://192.168.10.1:3128"
@@ -15,30 +15,16 @@ RUN apt-get install \
 
 RUN pip3 install -U pip setuptools
 RUN pip3 install numpy scipy Cython tk-tools matplotlib scikit-image opencv_python pydicom scikit-learn sympy
-RUN apt-get install --no-install-recommends --no-install-suggests --yes python3-psutil python3-pyxb python3-lxml python3-pil python3-h5py
+#RUN apt-get install --no-install-recommends --no-install-suggests --yes python3-psutil python3-pyxb python3-lxml python3-pil python3-h5py
 RUN DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests --yes python3-tk
 
-RUN pip3 install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+#RUN pip3 install torch==1.4.0+cpu torchvision==0.5.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
 
 # for embedded python plot, we need agg backend
 RUN mkdir -p /root/.config/matplotlib && touch /root/.config/matplotlib/matplotlibrc 
 RUN echo "backend : agg" >> /root/.config/matplotlib/matplotlibrc
 
 # Install MKL  
-RUN cd /tmp && \
-   wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
-   apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
-   sh -c 'echo deb https://apt.repos.intel.com/mkl all main > /etc/apt/sources.list.d/intel-mkl.list' && \
-   apt-get update && \
-   apt-get install --yes intel-mkl-64bit-2018.2-046 && \
-   update-alternatives --install /usr/lib/x86_64-linux-gnu/libblas.so     libblas.so-x86_64-linux-gnu      /opt/intel/mkl/lib/intel64/libmkl_rt.so 150 && \
-   update-alternatives --install /usr/lib/x86_64-linux-gnu/libblas.so.3   libblas.so.3-x86_64-linux-gnu    /opt/intel/mkl/lib/intel64/libmkl_rt.so 150 && \
-   update-alternatives --install /usr/lib/x86_64-linux-gnu/liblapack.so   liblapack.so-x86_64-linux-gnu    /opt/intel/mkl/lib/intel64/libmkl_rt.so 150 && \
-   update-alternatives --install /usr/lib/x86_64-linux-gnu/liblapack.so.3 liblapack.so.3-x86_64-linux-gnu  /opt/intel/mkl/lib/intel64/libmkl_rt.so 150 && \
-   echo "/opt/intel/lib/intel64"     >  /etc/ld.so.conf.d/mkl.conf && \
-   echo "/opt/intel/mkl/lib/intel64" >> /etc/ld.so.conf.d/mkl.conf && \
-   ldconfig && \
-   echo "MKL_THREADING_LAYER=GNU" >> /etc/environment
 
 #ZFP
 RUN mkdir /opt/code
@@ -54,9 +40,8 @@ RUN cd /opt/code && \
 ENV GADGETRON_HOME=/usr/local \
     ISMRMRD_HOME=/usr/local
 
-ENV PATH=$PATH:$GADGETRON_HOME/bin:$ISMRMRD_HOME/bin:/usr/local/cuda/bin \
-    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ISMRMRD_HOME/lib:$GADGETRON_HOME/lib:/usr/local/lib64 \
-    LIBRARY_PATH=$LIBRARY_PATH:/usr/local/cuda/lib64/stubs
+ENV PATH=$PATH:$GADGETRON_HOME/bin:$ISMRMRD_HOME/bin \
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ISMRMRD_HOME/lib:$GADGETRON_HOME/lib:/usr/local/lib64
 
 #ISMRMRD
 ARG ISMRMRD_URL=https://github.com/ismrmrd/ismrmrd.git
@@ -77,9 +62,7 @@ RUN cd /opt/code && \
     make install
 
 #GADGETRON
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda:/usr/local/cuda/lib64 
-RUN ls -l /usr/local && ls -l /usr/local/cuda/
-RUN nvcc -V
+
 RUN echo ${LD_LIBRARY_PATH}
 RUN ls -l /usr/local
 RUN echo ${PATH}
@@ -91,7 +74,7 @@ RUN cd /opt/code && \
     git checkout ${GADGETRON_COMMIT} && \
     mkdir build && \
     cd build && \
-    cmake .. -DUSE_MKL=ON -DBUILD_SUPPRESS_WARNINGS=ON && \
+    cmake ..  -DBUILD_SUPPRESS_WARNINGS=ON && \
     make -j $(nproc) && \
     make install && \
     /opt/code/gadgetron/docker/manifest --key .io.gadgetron.gadgetron.sha1 --value `git rev-parse HEAD` && \
@@ -121,10 +104,6 @@ RUN cd /opt/code && \
     git checkout ${BART_COMMIT} && \
     cd Makefiles && \
     > Makefile.local && \
-    echo "CUDA=1" >> Makefile.local && \
-    echo "CUDA_BASE = /usr/local/cuda/" >> Makefile.local && \
-    echo "MKL=1" >> Makefile.local && \
-    echo "MKL_BASE=/opt/intel/mkl" >> Makefile.local && \
     cd .. && \
     make && \
     make install
@@ -143,7 +122,6 @@ RUN cd /opt/code/  && \
     
 
 RUN mkdir -p /data/dumpSiemens/ && \ 
-    ln -s /opt/intel/mkl/lib/intel64/*.so /usr/local/lib/ && \
     cd /opt/code/PAPER_MP2RAGE_CS/gadgetron-gadgets-MP2RAGE/ && \
     mkdir build && \
     cd build && \
