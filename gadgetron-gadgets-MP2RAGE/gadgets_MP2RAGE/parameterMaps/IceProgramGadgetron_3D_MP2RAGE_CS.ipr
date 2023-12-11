@@ -1,0 +1,35 @@
+<XProtocol> 
+{
+    <ID> 1000000 
+
+    <ParamMap.""> 
+    {
+    }
+
+    // Preceeding non RCE modelled Configurators
+    <ProtocolComposer."IrisDefaultConfigurator">
+    {
+        <Dll>"IrisConfigurators"
+    }
+
+    // RCE modelled Configurators
+    <ProtocolComposer."RCEScanConfigurator">
+    {
+        <Dll>"IceConfigurators"
+    }
+
+    <ProtocolComposer."RCEImageReconConfigurator">
+    {
+        <Dll>"IceConfigurators"
+    }
+
+    <ProtocolComposer."FinishConfigurator">
+    {
+        <Dll>"IceConfigurators"
+    }
+
+    <ProtocolComposer."GadgetronConfigurator"> 
+    {
+        <Dll>"IceGadgetron"
+    }
+}
